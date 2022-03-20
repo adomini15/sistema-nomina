@@ -1,0 +1,169 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %} 
+{%block content %}
+{% include './partials/navbar.html'%}
+
+<div class="container">
+	<h1>{% block title %} {% endblock %}</h1>
+	<form id="formulario" class="row">
+		<div class="mb-3 col-6">
+			<label class="form-label" for="nombre">Nombre completo</label>
+			<input
+				required
+				maxlength="25"
+				id="nombre"
+				name="nombre"
+				type="text"
+				class="form-control"
+				placeholder="Nombre completo"
+			/>
+		</div>
+		<div class="mb-3 col-6">
+			<label class="form-label" for="sueldo_bruto">Sueldo bruto </label>
+			<input
+				required
+				min="1"
+				id="sueldo_bruto"
+				name="sueldo_bruto"
+				type="number"
+				class="form-control"
+				placeholder="Sueldo bruto"
+			/>
+		</div>
+		<div class="mb-3 col-6">
+			<label class="form-label" for="estado_civil">Estado civil </label>
+			<select
+				id="estado_civil"
+				name="estado_civil"
+				class="form-select"
+				aria-label="Default select example"
+				required
+			>
+				<option selected value="Soltero">Soltero</option>
+				<option value="Casado">Casado</option>
+				<option value="Union Libre">Union Libre</option>
+			</select>
+		</div>
+
+		<fieldset disabled class="row">
+			<div class="mb-3 col-4">
+				<label class="form-label" for="afp">AFP</label>
+				<input
+					id="afp"
+					name="afp"
+					disabled
+					type="text"
+					class="form-control"
+					placeholder="AFP"
+				/>
+			</div>
+			<div class="mb-3 col-4">
+				<label class="form-label" for="ars">ARS</label>
+				<input
+					id="ars"
+					name="ars"
+					type="text"
+					class="form-control"
+					placeholder="ARS"
+				/>
+			</div>
+			<div class="mb-3 col-4">
+				<label class="form-label" for="isr">ISR</label>
+				<input
+					id="isr"
+					name="isr"
+					type="text"
+					value="0"
+					class="form-control"
+					placeholder="ISR"
+				/>
+			</div>
+
+			<div class="mb-3 col-4">
+				<label class="form-label" for="sueldo_neto">Sueldo neto</label>
+				<input
+					id="sueldo_neto"
+					name="sueldo_neto"
+					type="number"
+					class="form-control"
+					placeholder="Sueldo neto"
+				/>
+			</div>
+		</fieldset>
+
+		<div class="row">
+			<div class="col">
+				<input
+					id="guardarUsuario"
+					type="submit"
+					value="Guardar"
+					class="btn btn-primary"
+				/>
+			</div>
+		</div>
+
+		<span
+			id="badgeUsuario"
+			class="badge bg-success p-2 mt-5"
+			style="display: none; width: 30%"
+			>Usuario agregado</span
+		>
+	</form>
+</div>
+
+<script>
+	const guardarUsuario = document.querySelector("#guardarUsuario");
+
+	// guardarUsuario.disabled = true;
+
+	$("#sueldo_bruto").keyup(function () {
+		// guardarUsuario.disabled = !this.value;
+
+		const afp = ($(this).val() * 2.87) / 100;
+		$("#afp").val(afp.toFixed(2));
+
+		const ars = ($(this).val() * 3.04) / 100;
+		$("#ars").val(ars.toFixed(2));
+
+		let isr = 0;
+
+		if ($(this).val() > 35000) {
+			isr = ($(this).val() * 5) / 100;
+		}
+
+		$("#isr").val(isr.toFixed(2));
+
+		const sueldo_neto = $("#sueldo_bruto").val() - afp - ars - isr;
+
+		$("#sueldo_neto").val(sueldo_neto.toFixed(2));
+	});
+
+	function createOrUpdate(url, method = "POST") {
+		$("#formulario").submit(async function (ev) {
+			ev.preventDefault();
+
+			const body = new FormData();
+
+			body.append("nombre", $("#nombre").val());
+			body.append("estado_civil", $("#estado_civil").val());
+			body.append("sueldo_bruto", $("#sueldo_bruto").val());
+			body.append("sueldo_neto", $("#sueldo_neto").val());
+			body.append("afp", $("#afp").val());
+			body.append("ars", $("#ars").val());
+			body.append("isr", $("#isr").val());
+
+			const response = await fetch(url, {
+				method,
+				body,
+			});
+
+			window.location.href = "/empleados";
+		});
+	}
+</script>
+
+<!-- prettier-ignore -->
+
+{% block script_form %} {% endblock %}
+
+{% endblock %}

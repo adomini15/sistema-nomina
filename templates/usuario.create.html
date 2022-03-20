@@ -1,0 +1,15 @@
+<!-- prettier-ignore -->
+{% extends '/partials/usuario.form.html'%} 
+{% block form_title %}Nuevo Usuario{%endblock %}
+
+{% block signlink %}
+<a href="{{url_for('signin')}}">Ingresar Sesión</a>
+{% endblock %}
+
+<!-- prettier-ignore -->
+
+{% block form_script %}
+<script>
+	accessOrAggregateUser("/usuarios", "POST", "/signin");
+</script>
+{%endblock %}

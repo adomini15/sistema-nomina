@@ -1,0 +1,10 @@
+<!-- prettier-ignore -->
+{% extends '/partials/empleado.form.html'%}
+
+{% block title%} Agregar Empleado {% endblock %}
+
+{% block script_form%}
+<script>
+	createOrUpdate("/empleados");
+</script>
+{% endblock %}

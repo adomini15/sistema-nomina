@@ -1,0 +1,117 @@
+<!-- prettier-ignore -->
+{% extends "base.html"%}
+{% block title %} Lista de usuarios {% endblock %}
+<title>Lista de usuarios</title>
+
+{% block content %} {% include './partials/navbar.html'%}
+
+<div class="container">
+	<h1>Lista de usuarios</h1>
+	<input
+		id="busqueda"
+		type="text"
+		class="form-control mt-5 mb-5"
+		placeholder="Busqueda de empleados"
+	/>
+
+	<table class="table">
+		<thead>
+			<tr>
+				{% for column in columns %}
+				<th scope="col">{{ column }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody id="tablaUsuarios">
+			{% for empleado in empleados %}
+			<tr>
+				{% for campo in empleado %}
+				<td>{{ campo }}</td>
+				{% endfor %}
+
+				<td>
+					<a
+						class="btn btn-primary"
+						href="{{ url_for('empleado_edit', id=empleado[0]) }}"
+						>Editar</a
+					>
+
+					<button
+						data-method="delete"
+						data-id="{{empleado[0]}}"
+						class="btn btn-danger"
+						data-bs-toggle="modal"
+						data-bs-target="#exampleModal"
+					>
+						Eliminar
+					</button>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<!-- Ventana de Confirmación de Delete -->
+<div
+	class="modal fade"
+	id="exampleModal"
+	tabindex="-1"
+	aria-labelledby="exampleModalLabel"
+	aria-hidden="true"
+>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">
+					Eliminación de Empleado
+				</h5>
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="modal"
+					aria-label="Close"
+				></button>
+			</div>
+			<div class="modal-body">¿Desea continuar con la operación?</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+					Cerrar
+				</button>
+				<button type="button" class="btn btn-primary">Aceptar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function () {
+		const modal = document.querySelector("#exampleModal");
+
+		$("#busqueda").on("keyup", function () {
+			const busqueda = $(this).val().toLowerCase();
+
+			$("#tablaUsuarios tr").filter(function () {
+				$(this).toggle($(this).text().toLowerCase().indexOf(busqueda) > -1);
+			});
+		});
+
+		modal.addEventListener("shown.bs.modal", function (e) {
+			const empleado_id = $(e.relatedTarget).data("id");
+
+			$(".modal-footer button:nth-child(2)").on("click", async function (e) {
+				try {
+					const res = await fetch(`/empleados/${empleado_id}`, {
+						method: "DELETE",
+					});
+
+					window.location.reload();
+				} catch (error) {
+					console.log(error);
+				}
+			});
+		});
+	});
+</script>
+
+{% endblock %}

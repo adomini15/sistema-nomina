@@ -1,0 +1,39 @@
+<!-- prettier-ignore -->
+{% extends '/partials/empleado.form.html'%} 
+
+{% block title%} Editar Empleado {% endblock %}
+
+{% block script_form%}
+
+<script>
+	$(document).ready(function () {
+	    const empleado = {{ data | safe }};
+	    const formulario = document.querySelector('#formulario');
+
+		[
+			['name', 'carlos'],
+			['dwd', 'ewe']
+		]
+
+
+	    Object.entries(empleado).forEach(function ([k,v]) {
+	           const control = formulario[k];
+
+	           if(control instanceof HTMLSelectElement) {
+	               Array.from(control.options)
+	                   .forEach(function (option) {
+	                        if(!option.value.localeCompare(v, undefined, { sensitivity: 'base' })) {
+	                            control.value = option.value;
+	                        }
+	                   })
+	           } else {
+	               formulario[k].value = v;
+	           }
+	       })
+
+
+		createOrUpdate(`/empleados/${empleado.id}`, 'PUT');
+
+	});
+</script>
+{% endblock %}

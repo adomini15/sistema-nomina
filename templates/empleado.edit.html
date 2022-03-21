@@ -10,13 +10,9 @@
 	    const empleado = {{ data | safe }};
 	    const formulario = document.querySelector('#formulario');
 
-		[
-			['name', 'carlos'],
-			['dwd', 'ewe']
-		]
 
+	    Object.entries(empleado).forEach(function ([k, v]) {
 
-	    Object.entries(empleado).forEach(function ([k,v]) {
 	           const control = formulario[k];
 
 	           if(control instanceof HTMLSelectElement) {
